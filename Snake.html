@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./Snake.js"></script>
+</head>
+<style>
+    .world {
+        width: 500px;
+        height: 500px;
+        position: relative;
+        margin: auto;
+        background-color: black;
+        display: grid;
+        grid-template-rows: repeat(25, 1fr);
+        grid-template-columns: repeat(25, 1fr);
+        grid-auto-flow: row;
+    }
+
+    .block {
+        border: 1px solid gray;
+    }
+</style>
+
+<body>
+    <div class="world">
+
+    </div>
+</body>
+
+</html>
+<script>
+    const worldData = [
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    ]
+
+    const world = document.querySelector('.world');
+    let snakeList = [];
+    for (let i = 0; i < 5; i++) {
+        let snake = new Snake(i * 20, 0, 20, 20);
+        snakeList.unshift(snake);
+        world.append(snake.createSnake());
+    }
+
+    worldData.forEach((worlds)=>{
+        
+        worlds.forEach((element)=>{
+            
+            if(element===1){
+                world.append(createFood());
+            }else{
+                world.append(createBrick());
+            }
+        })
+
+    })
+
+    function createFood(){
+        const food = document.createElement('div');
+        food.classList.add('food');
+        food.style.background = 'red';
+        return food;
+    }
+    
+    function createBrick(){
+        const brick = document.createElement('div');
+        brick.classList.add('brick');
+        brick.style.border = '1px solid gray';
+        return brick;
+    }
+
+    document.addEventListener('keydown', function (event) {
+        console.log(event.code);
+        if (event.code === 'ArrowRight' || event.code === 'ArrowLeft' || event.code === 'ArrowDown' || event.code === 'ArrowUp') {
+            snakeList[0].setKeyDown(event.code);
+            snakeList[0].getPosition()
+            //let xy = snakeList[0].getPosition();
+            //console.log(xy);
+        }
+
+        if (event.code === 'Space') {
+            // snake.setKeyDown(event.code) ;
+        }
+
+    })
+
+    document.addEventListener('keyup', function (event) {
+
+        if (event.code === 'ArrowRight' || event.code === 'ArrowLeft' || event.code === 'ArrowDown' || event.code === 'ArrowUp') {
+
+            snakeList[0].setKeyDown(event.code);
+        }
+
+        if (event.code === 'Space') {
+            // snake.setKeyDown(event.code) ;
+        }
+    })
+
+    setInterval(() => {
+        snakeList.forEach((snake) => {
+            snake.render();
+        })
+
+        //snake.render();
+    }, 16.6)
+
+    let x = snakeList[0].x
+    let y = snakeList[0].y
+
+    const time = setInterval(() => {
+
+        for (let i = 1; i < snakeList.length; i += 1) {
+           
+            snakeList[i].checkHistory2(x, y);
+            snakeList[i].checkMove();
+            x = snakeList[i].tempx
+            y = snakeList[i].tempy
+        }
+        
+        snakeList[0].move();
+        snakeList[0].checkReHead(snakeList);
+        if(snakeList[0].checkMove()){
+            clearInterval(time);
+        }
+
+        if(snakeList[0].checkBody(snakeList)){
+            clearInterval(time);
+        }
+
+        if(snakeList[0].checkEat(worldData)){
+            let snake = new Snake(snakeList[0].x, snakeList[0].y, 20, 20);
+            snakeList.push(snake);
+           
+            world.append(snake.createSnake());
+            const bricks = document.querySelectorAll('.brick');
+            bricks.forEach((el)=>{
+                el.remove();
+            })
+            const food = document.querySelector('.food');
+            food.remove();
+            const x = Math.floor((Math.random()*24));
+            const y =  Math.floor((Math.random()*24));
+            worldData[x][y] = 1;
+            worldData.forEach((worlds)=>{
+          
+
+            worlds.forEach((element)=>{
+            
+            if(element===1){
+                world.append(createFood());
+            }else{
+                world.append(createBrick());
+            }
+        })
+
+    })
+           
+        }
+            x = snakeList[0].x
+            y = snakeList[0].y
+        
+        
+    }, 200)
+
+</script>
